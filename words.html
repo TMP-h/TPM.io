@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <script src="words.js" type="text/javascript"></script>
+    <style>
+        body{
+            text-align: center;
+        }
+
+        header{
+            border:solid;
+            background-color:rgb(134, 179, 182);
+            font-family: 'zantroke';
+            color:black;
+            text-align:center;
+            height:150px;   
+            font-size:50px;
+            text-shadow:green 3px 2px ;
+        }
+        header>div{
+            height:50px;
+            
+        }
+        div#menu{    
+            padding-top:10px;
+            /* border:solid; */
+            position :absolute;
+            left:50%;
+            cursor: pointer;
+            font-family: 'ciclefina';
+        } 
+
+        div#search_box{
+            /* border:solid; */
+            position:absolute;
+            padding:0px;
+            top:5%;
+            left:2%;
+        }
+      
+
+        span{ 
+            border:solid 2px;
+            border-radius:10%;
+            font-size:0.5em;
+        }
+
+        input.text{
+            position:relative;
+            bottom:5px;
+            background-color: rgb(130, 130, 143);
+            height:30px;
+            /* width:100px; */
+        }
+
+        span:hover{
+            cursor:pointer;
+            background-color:rgb(100, 122, 117);
+            
+        }
+        span:active{
+            border:3px  inset  ;
+	        background-color:rgb(100, 122, 117);
+	        color:rgb(255,255,255) ;
+
+        }
+       
+        div#select{
+            border:solid rgb(139, 93, 93);
+            position:absolute;
+            width:50%;
+            height:50%;
+            top:30%;
+            left:27%;
+        }
+        div#select>span{
+            border:0ch;
+            border-radius:0%;           
+            font-size: 20px;
+            border:3px inset;
+            margin-top: 5px;
+            background-color:rgb(112, 83, 83);
+        }
+        div#select>span#close{
+            width:40px;
+            position:absolute;
+            right:1%;
+        }
+
+        section{
+            /* font-family: 'ciclefina';
+            text-shadow:green 3px 2px ; */
+            background-color:rgb(100, 122, 117);
+            /* display:flex; */
+            color:black;
+            text-align:center;
+            height:500px;
+            font-size:20px;
+        }
+
+        article#resulute{
+            position:relative;
+            top:50px;
+        }
+        article#english{
+            position:relative;
+            top:20px;
+        }
+        
+    
+        
+        article{
+            /* flex:300px; */
+            /* border:solid; */
+            /* padding:20px; */
+            /* margin-top:10px; */
+            height:100px;
+            
+        }
+        
+        footer{
+            background-color:black;
+            color:white;
+            text-align:center;
+            height:50px;
+            /* margin:10px; */
+            padding-top:30px;
+        }
+    </style>
+    <script type="text/javascript">
+        var words={};
+        words={
+            lengths:en6.length,
+            english: [],
+            soundmark: [],
+            chinese: [],
+            SMandC:[]
+        };
+    
+        
+        function init(){
+            
+            for(var i=0;i<words.lengths;i++){
+                var word=[];
+                var temp="";
+                word=en6[i].split("/");
+                words.english[i]=word[0];
+                words.soundmark[i]=word[1];
+                words.chinese[i]=word[2];
+                word.shift();
+                temp=word.join("/");
+                words.SMandC[i]=temp;
+
+                // 从单词词性和中文的混合体中提取中文
+                // var str = words.chinese[i];
+                // str=str.match(/[\u4e00-\u9fa5]/g).join("");
+                // words.chinese[i]=str;
+                 
+            }
+
+            var id=0;
+            var flag=true;
+            var section=document.querySelector("section");
+            var english=document.querySelector("article#english");
+            var soundmark=document.querySelector("article#soundmark");
+            var chinese=document.querySelector("article#chinese");
+            var resulute=document.querySelector("article#resulute");
+
+            var displayEnglish=document.querySelector("div#display-english");
+            var start=document.querySelector("span#start");
+            var random=document.querySelector("span#random");
+            var display_chinese=document.querySelector("span#display-chinese");
+            var prev=document.querySelector("span#prev");
+            var next=document.querySelector("span#next");
+
+            var englishText=document.querySelector("input#englishText");
+            var chineseText=document.querySelector("input#chineseText");
+
+            var affirmEnglish=document.querySelector("span#affirm-english");
+            var affirmChinese=document.querySelector("span#affirm-chinese");
+
+            //随机显示
+            random.onclick=function(){
+                var random=Math.round(Math.random()*words.lengths);
+                displayEnglish.textContent=words.english[random];
+                resulute.textContent="";
+                id=random;
+                if(!flag){
+                        chinese.textContent=words.SMandC[id];
+                    }
+                else
+                    chinese.textContent="";
+            }
+
+            //查询英文，音标，中文函数
+            function mySearch(text,param){
+                for(var i=0;i<words.lengths;i++){
+                    if(text==param[i]){
+                        return i;
+                    }
+                }
+                return -1;
+            }
+
+            //模糊查找
+            function myDimSearch(text,param){
+                if(param[id].indexOf(text)!=-1){
+                    return true;
+                }
+                return false;
+            }
+
+           
+
+            //显示中文
+            display_chinese.onclick=function(){
+                if(flag==true){
+                    resulute.textContent="";
+                    chinese.textContent=words.SMandC[id];
+                    flag=false;
+                }
+                else{
+                    chinese.textContent="";
+                    flag=true;
+                }
+                
+            }
+
+            prev.onclick=function(){
+                id--;
+                if(id==words.lengths)
+                    id=0;
+                if(id==-1){
+                    id=words.lengths-1;
+                }
+                if(!flag){
+                        displayEnglish.textContent=words.english[id];
+                        chinese.textContent=words.SMandC[id];
+                    }
+                    else{
+                        displayEnglish.textContent=words.english[id];
+                        chinese.textContent="";
+                    }
+            }
+
+            next.onclick=function(){
+                id++;
+                if(id==words.lengths)
+                    id=0;
+                if(id==-1){
+                    id=words.lengths-1;
+                }
+                if(!flag){
+                        displayEnglish.textContent=words.english[id];
+                        chinese.textContent=words.SMandC[id];
+                    }
+                    else{
+                        displayEnglish.textContent=words.english[id];
+                        chinese.textContent="";
+                    }
+            }
+
+            //查找英文单词
+            affirmEnglish.onclick=function(){
+                
+                var n=mySearch(englishText.value,words.english);
+                displayEnglish.textContent="";
+                
+                console.log(n);
+                if(n!=-1){
+                    displayEnglish.textContent=words.english[n];
+                    resulute.textContent="";
+                    id=n;
+                    if(!flag){
+                        chinese.textContent=words.SMandC[id];
+                    }
+                    else{
+                        chinese.textContent="";
+                    }
+                }
+                else{
+                    resulute.textContent="未查到";
+                    chinese.textContent="";   
+                }
+
+            }
+            //查找中文含义
+            affirmChinese.onclick=function(){
+                var n=myDimSearch(chineseText.value,words.chinese);
+                if(n){   
+                    chinese.textContent=words.SMandC[id];
+                    resulute.textContent="答案正确";
+
+                }
+                else{
+                    resulute.textContent="答案错误";
+                    chinese.textContent="";
+                }
+            }
+            var select=document.querySelector("div#select");
+            var close=document.querySelector("span#close");
+            var english_title=document.querySelector("span#english_title");
+            var chinese1=document.querySelector("span#chinese1");
+            var chinese2=document.querySelector("span#chinese2");
+            var chinese3=document.querySelector("span#chinese3");
+            var chinese4=document.querySelector("span#chinese4");
+            var shown;
+
+            select.style.display="none";
+            close.onclick=function(){
+                select.style.display="none";
+            }
+
+            function isTrue(text){
+                    if(text==words.SMandC[shown]){
+                        return true;
+                    }
+                    return false;
+            }
+
+            function createRandom(){
+                chinese1.style.backgroundColor="";
+                chinese2.style.backgroundColor="";
+                chinese3.style.backgroundColor="";
+                chinese4.style.backgroundColor="";
+                var n=Math.round(Math.random()*4);
+                var random=Math.round(Math.random()*words.lengths);
+                shown=random;
+                english_title.textContent=words.english[random];
+                switch(n){
+                    
+                    case 1:
+                        chinese1.textContent=words.SMandC[random];
+                        chinese2.textContent=words.SMandC[Math.round(Math.random()*words.lengths)];
+                        chinese3.textContent=words.SMandC[Math.round(Math.random()*words.lengths)];
+                        chinese4.textContent=words.SMandC[Math.round(Math.random()*words.lengths)];
+                        break;
+                    case 2:
+                        chinese2.textContent=words.SMandC[random];
+                        chinese1.textContent=words.SMandC[Math.round(Math.random()*words.lengths)];
+                        chinese3.textContent=words.SMandC[Math.round(Math.random()*words.lengths)];
+                        chinese4.textContent=words.SMandC[Math.round(Math.random()*words.lengths)];
+                        break;
+                    case 3:
+                        chinese3.textContent=words.SMandC[random];
+                        chinese2.textContent=words.SMandC[Math.round(Math.random()*words.lengths)];
+                        chinese1.textContent=words.SMandC[Math.round(Math.random()*words.lengths)];
+                        chinese4.textContent=words.SMandC[Math.round(Math.random()*words.lengths)];
+                        break;
+                    case 0:
+                    case 4:
+                        chinese4.textContent=words.SMandC[random];
+                        chinese2.textContent=words.SMandC[Math.round(Math.random()*words.lengths)];
+                        chinese3.textContent=words.SMandC[Math.round(Math.random()*words.lengths)];
+                        chinese1.textContent=words.SMandC[Math.round(Math.random()*words.lengths)];
+                        break;
+
+                }
+             
+            }
+            //做题
+            start.onclick=function(){   
+                // resulute.textContent="";
+                // displayEnglish.textContent=words.english[0];
+                // id=0;
+                // if(!flag){
+                //         chinese.textContent=words.SMandC[id];
+                //     }
+                // else{
+                //     chinese.textContent="";
+                // }
+                resulute.textContent="";
+                displayEnglish.textContent="";
+                chinese.textContent="";
+                select.style.display="block";
+                createRandom();
+                chinese1.onclick=function(){
+                if(isTrue(chinese1.textContent))
+                    createRandom();
+                else
+                    chinese1.style.backgroundColor="firebrick";
+                }
+                chinese2.onclick=function(){
+                    if(isTrue(chinese2.textContent))
+                        createRandom();
+                    else
+                        chinese2.style.backgroundColor="firebrick";
+                        
+                }
+                chinese3.onclick=function(){
+                    if(isTrue(chinese3.textContent))
+                        createRandom();
+                    else
+                        chinese3.style.backgroundColor="firebrick";
+                        
+                }
+                chinese4.onclick=function(){
+                    if(isTrue(chinese4.textContent))
+                        createRandom();
+                    else
+                        chinese4.style.backgroundColor="firebrick";
+                }
+                
+            }
+            
+        }
+
+        
+        window.onload=function(){
+            init();
+                
+            　　
+        }
+
+       
+    </script>
+</head>
+<body>
+    <header>
+        English CET-6 words<br/>
+
+        <div id="search_box">
+            <input type="text" value="请输入单词以查找" id="englishText" class="text" onclick="if(this.value='请输入单词以查找'){this.value=''}"/>
+            <span id="affirm-english" class="button">确定</span>
+        </div>
+
+        <div id="menu">
+            <span  id="start" class="button">做题</span>
+            <span  id="random" class="button">随机单词</span>
+            <span id="display-chinese" class="button">显示中文</span>
+            <span  id="prev" class="button">上一个</span>
+            <span  id="next" class="button">下一个</span>
+            
+            <!-- onclick="if(this.value='请输入单词中文释义'){this.value=''}"实现点击文本框清空其内容 -->
+            <!-- placeholder="请输入单词中文释义"也可以 -->
+            <input type="text" value="请输入单词中文释义" id="chineseText" class="text" onclick="if(this.value='请输入单词中文释义'){this.value=''}" />
+            <span id="affirm-chinese" class="button">确认</span>
+        </div>
+       
+       
+    </header>
+
+    <section>
+        <article id="resulute" >
+
+        </article>
+        <article id="english">
+            <div id="display-english"></div>
+        </article>
+        <article id="chinese">
+
+        </article>
+    </section>
+    <footer>
+        CopyLeft by Mr TPM @Sep 2021
+    </footer>
+    <div id="select">
+        <span id="close">
+            关闭
+        </span><br/><br/>
+        <span id="english_title">
+
+        </span><br/><br/><br/>
+        <span id="chinese1">
+            
+        </span><br/><br/><br/>
+        <span id="chinese2">
+            
+        </span><br/><br/><br/>
+        <span id="chinese3">
+            
+        </span ><br/><br/><br/>
+        <span id="chinese4">
+
+        </span>
+    </div>
+</body>
+</html>
+
+
+
